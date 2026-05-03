@@ -1,13 +1,13 @@
 [package]
-name = "wacli"
-version = "0.1.0"
+name = "whatshell"
+version = "0.1.1"
 edition = "2024"
-description = "WACLI: a Rust WhatsApp Web CLI for coding agents"
+description = "Whatshell: a Rust WhatsApp Web CLI for coding agents"
 license = "MIT"
-repository = "https://example.invalid/wacli"
+repository = "https://github.com/iamjr15/whatshell"
 
 [[bin]]
-name = "wacli"
+name = "whatshell"
 path = "src/main.rs"
 
 [dependencies]

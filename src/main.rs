@@ -11,7 +11,7 @@ mod jid;
 mod lock;
 mod output;
 mod store;
-mod wacli;
+mod whatshell;
 
 use cli::{
     AuthSubcommand, BlockingSubcommand, ChatsSubcommand, Cli, Command, ContactsSubcommand,
@@ -52,7 +52,7 @@ async fn run(cli: Cli) -> Result<()> {
             Some(AuthSubcommand::Status) => auth_status(&config),
             Some(AuthSubcommand::Logout) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                wacli::logout(config).await?;
+                whatshell::logout(config).await?;
                 if cli.json {
                     output::json_response(StatusMessage::new("logged out"))
                 } else {
@@ -62,38 +62,40 @@ async fn run(cli: Cli) -> Result<()> {
             }
             None => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                wacli::auth(config, args).await
+                whatshell::auth(config, args).await
             }
         },
         Command::Sync(args) => {
             let _lock = StoreLock::acquire(&config.lock_path())?;
-            wacli::sync(config, args).await
+            whatshell::sync(config, args).await
         }
         Command::Listen(args) => {
             let _lock = StoreLock::acquire(&config.lock_path())?;
-            wacli::listen(config, args.stream_jsonl).await
+            whatshell::listen(config, args.stream_jsonl).await
         }
         Command::Send(args) => {
             let _lock = StoreLock::acquire(&config.lock_path())?;
             match args.command {
                 SendSubcommand::Text(args) => {
-                    print_send_summary(&config, wacli::send_text(config.clone(), args).await?)
+                    print_send_summary(&config, whatshell::send_text(config.clone(), args).await?)
                 }
                 SendSubcommand::File(args) => {
-                    print_send_summary(&config, wacli::send_file(config.clone(), args).await?)
+                    print_send_summary(&config, whatshell::send_file(config.clone(), args).await?)
                 }
                 SendSubcommand::React(args) => {
-                    print_send_summary(&config, wacli::send_react(config.clone(), args).await?)
+                    print_send_summary(&config, whatshell::send_react(config.clone(), args).await?)
                 }
                 SendSubcommand::Poll(args) => {
-                    print_send_summary(&config, wacli::send_poll(config.clone(), args).await?)
+                    print_send_summary(&config, whatshell::send_poll(config.clone(), args).await?)
                 }
-                SendSubcommand::Location(args) => {
-                    print_send_summary(&config, wacli::send_location(config.clone(), args).await?)
-                }
-                SendSubcommand::Contact(args) => {
-                    print_send_summary(&config, wacli::send_contact(config.clone(), args).await?)
-                }
+                SendSubcommand::Location(args) => print_send_summary(
+                    &config,
+                    whatshell::send_location(config.clone(), args).await?,
+                ),
+                SendSubcommand::Contact(args) => print_send_summary(
+                    &config,
+                    whatshell::send_contact(config.clone(), args).await?,
+                ),
             }
         }
         Command::Messages(args) => handle_messages(config, args.command).await,
@@ -112,63 +114,63 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_archive(config.clone(), &args.chat, true).await?,
+                    whatshell::chat_archive(config.clone(), &args.chat, true).await?,
                 )
             }
             ChatsSubcommand::Unarchive(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_archive(config.clone(), &args.chat, false).await?,
+                    whatshell::chat_archive(config.clone(), &args.chat, false).await?,
                 )
             }
             ChatsSubcommand::Pin(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_pin(config.clone(), &args.chat, true).await?,
+                    whatshell::chat_pin(config.clone(), &args.chat, true).await?,
                 )
             }
             ChatsSubcommand::Unpin(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_pin(config.clone(), &args.chat, false).await?,
+                    whatshell::chat_pin(config.clone(), &args.chat, false).await?,
                 )
             }
             ChatsSubcommand::Mute(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_mute(config.clone(), &args.chat, true).await?,
+                    whatshell::chat_mute(config.clone(), &args.chat, true).await?,
                 )
             }
             ChatsSubcommand::Unmute(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_mute(config.clone(), &args.chat, false).await?,
+                    whatshell::chat_mute(config.clone(), &args.chat, false).await?,
                 )
             }
             ChatsSubcommand::MarkRead(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_mark_read(config.clone(), &args.chat, !args.unread).await?,
+                    whatshell::chat_mark_read(config.clone(), &args.chat, !args.unread).await?,
                 )
             }
             ChatsSubcommand::Delete(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::chat_delete(config.clone(), &args.chat, args.delete_media).await?,
+                    whatshell::chat_delete(config.clone(), &args.chat, args.delete_media).await?,
                 )
             }
         },
         Command::Contacts(args) => match args.command {
             ContactsSubcommand::Sync(_) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                output::json_response(wacli::contacts_sync(config.clone()).await?)
+                output::json_response(whatshell::contacts_sync(config.clone()).await?)
             }
             ContactsSubcommand::List(args) => {
                 sync_contacts_unless_offline(&config, args.offline).await?;
@@ -188,30 +190,30 @@ async fn run(cli: Cli) -> Result<()> {
             }
             ContactsSubcommand::Check(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                let rows = wacli::contacts_check(config.clone(), args.phones).await?;
+                let rows = whatshell::contacts_check(config.clone(), args.phones).await?;
                 output::json_response(rows)
             }
             ContactsSubcommand::Info(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                let rows = wacli::contacts_info(config.clone(), args.phones).await?;
+                let rows = whatshell::contacts_info(config.clone(), args.phones).await?;
                 output::json_response(rows)
             }
         },
         Command::Groups(args) => match args.command {
             GroupsSubcommand::List(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                let rows = wacli::groups_list(config.clone(), args.query).await?;
+                let rows = whatshell::groups_list(config.clone(), args.query).await?;
                 output::json_response(rows)
             }
             GroupsSubcommand::Info(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                output::json_response(wacli::groups_info(config.clone(), &args.jid).await?)
+                output::json_response(whatshell::groups_info(config.clone(), &args.jid).await?)
             }
             GroupsSubcommand::Create(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_create(
+                    whatshell::groups_create(
                         config.clone(),
                         &args.subject,
                         &args.participants,
@@ -227,7 +229,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_set_subject(
+                    whatshell::groups_set_subject(
                         config.clone(),
                         &args.jid,
                         &args.subject,
@@ -243,7 +245,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_set_description(
+                    whatshell::groups_set_description(
                         config.clone(),
                         &args.jid,
                         if args.clear { None } else { args.description },
@@ -256,18 +258,20 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_invite_link(config.clone(), &args.jid, args.reset).await?,
+                    whatshell::groups_invite_link(config.clone(), &args.jid, args.reset).await?,
                 )
             }
             GroupsSubcommand::InviteInfo(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                output::json_response(wacli::groups_invite_info(config.clone(), &args.code).await?)
+                output::json_response(
+                    whatshell::groups_invite_info(config.clone(), &args.code).await?,
+                )
             }
             GroupsSubcommand::Leave(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_leave(config.clone(), &args.jid).await?,
+                    whatshell::groups_leave(config.clone(), &args.jid).await?,
                 )
             }
             GroupsSubcommand::Add(args) => handle_group_participants(config, args, "add").await,
@@ -298,7 +302,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_set_ephemeral(
+                    whatshell::groups_set_ephemeral(
                         config.clone(),
                         &args.jid,
                         args.seconds,
@@ -314,8 +318,13 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_set_approval(config.clone(), &args.jid, args.on, args.dry_run)
-                        .await?,
+                    whatshell::groups_set_approval(
+                        config.clone(),
+                        &args.jid,
+                        args.on,
+                        args.dry_run,
+                    )
+                    .await?,
                 )
             }
             GroupsSubcommand::MemberAdd(args) => {
@@ -325,7 +334,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::groups_set_member_add(
+                    whatshell::groups_set_member_add(
                         config.clone(),
                         &args.jid,
                         args.admins_only,
@@ -336,7 +345,7 @@ async fn run(cli: Cli) -> Result<()> {
             }
             GroupsSubcommand::Requests(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                output::json_response(wacli::groups_requests(config.clone(), &args.jid).await?)
+                output::json_response(whatshell::groups_requests(config.clone(), &args.jid).await?)
             }
         },
         Command::Media(args) => match args.command {
@@ -362,7 +371,7 @@ async fn run(cli: Cli) -> Result<()> {
                 })?;
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 let summary =
-                    wacli::media_download(config.clone(), media, args.output, args.overwrite)
+                    whatshell::media_download(config.clone(), media, args.output, args.overwrite)
                         .await?;
                 if config.json {
                     output::json_response(summary)
@@ -375,31 +384,37 @@ async fn run(cli: Cli) -> Result<()> {
         Command::Presence(args) => match args.command {
             PresenceSubcommand::Online => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                print_action_summary(&config, wacli::presence_set(config.clone(), true).await?)
+                print_action_summary(
+                    &config,
+                    whatshell::presence_set(config.clone(), true).await?,
+                )
             }
             PresenceSubcommand::Offline => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                print_action_summary(&config, wacli::presence_set(config.clone(), false).await?)
+                print_action_summary(
+                    &config,
+                    whatshell::presence_set(config.clone(), false).await?,
+                )
             }
             PresenceSubcommand::Typing(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::presence_chatstate(config.clone(), &args.chat, "typing").await?,
+                    whatshell::presence_chatstate(config.clone(), &args.chat, "typing").await?,
                 )
             }
             PresenceSubcommand::Recording(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::presence_chatstate(config.clone(), &args.chat, "recording").await?,
+                    whatshell::presence_chatstate(config.clone(), &args.chat, "recording").await?,
                 )
             }
             PresenceSubcommand::Paused(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::presence_chatstate(config.clone(), &args.chat, "paused").await?,
+                    whatshell::presence_chatstate(config.clone(), &args.chat, "paused").await?,
                 )
             }
         },
@@ -408,54 +423,57 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::profile_set_name(config.clone(), &args.text, args.dry_run).await?,
+                    whatshell::profile_set_name(config.clone(), &args.text, args.dry_run).await?,
                 )
             }
             ProfileSubcommand::SetAbout(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::profile_set_about(config.clone(), &args.text, args.dry_run).await?,
+                    whatshell::profile_set_about(config.clone(), &args.text, args.dry_run).await?,
                 )
             }
             ProfileSubcommand::SetPicture(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::profile_set_picture(config.clone(), &args.file, args.dry_run).await?,
+                    whatshell::profile_set_picture(config.clone(), &args.file, args.dry_run)
+                        .await?,
                 )
             }
             ProfileSubcommand::RemovePicture => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::profile_remove_picture(config.clone()).await?,
+                    whatshell::profile_remove_picture(config.clone()).await?,
                 )
             }
         },
         Command::Blocking(args) => match args.command {
             BlockingSubcommand::List => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                output::json_response(wacli::blocking_list(config.clone()).await?)
+                output::json_response(whatshell::blocking_list(config.clone()).await?)
             }
             BlockingSubcommand::Block(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::blocking_set(config.clone(), &args.contact, true, args.dry_run).await?,
+                    whatshell::blocking_set(config.clone(), &args.contact, true, args.dry_run)
+                        .await?,
                 )
             }
             BlockingSubcommand::Unblock(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_action_summary(
                     &config,
-                    wacli::blocking_set(config.clone(), &args.contact, false, args.dry_run).await?,
+                    whatshell::blocking_set(config.clone(), &args.contact, false, args.dry_run)
+                        .await?,
                 )
             }
             BlockingSubcommand::IsBlocked(args) => {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 output::json_response(
-                    wacli::blocking_is_blocked(config.clone(), &args.contact).await?,
+                    whatshell::blocking_is_blocked(config.clone(), &args.contact).await?,
                 )
             }
         },
@@ -464,7 +482,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_send_summary(
                     &config,
-                    wacli::status_text(
+                    whatshell::status_text(
                         config.clone(),
                         &args.message,
                         &args.recipients,
@@ -479,7 +497,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_send_summary(
                     &config,
-                    wacli::status_image(
+                    whatshell::status_image(
                         config.clone(),
                         &args.file,
                         args.thumbnail.as_deref(),
@@ -494,7 +512,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_send_summary(
                     &config,
-                    wacli::status_video(
+                    whatshell::status_video(
                         config.clone(),
                         &args.file,
                         args.thumbnail.as_deref(),
@@ -510,8 +528,13 @@ async fn run(cli: Cli) -> Result<()> {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
                 print_send_summary(
                     &config,
-                    wacli::status_revoke(config.clone(), &args.id, &args.recipients, args.dry_run)
-                        .await?,
+                    whatshell::status_revoke(
+                        config.clone(),
+                        &args.id,
+                        &args.recipients,
+                        args.dry_run,
+                    )
+                    .await?,
                 )
             }
         },
@@ -529,7 +552,7 @@ async fn run(cli: Cli) -> Result<()> {
 
             if args.connect {
                 let _lock = StoreLock::acquire(&config.lock_path())?;
-                wacli::check_connection(config.clone()).await?;
+                whatshell::check_connection(config.clone()).await?;
                 if !config.json {
                     output::print_status("connection: ok");
                 }
@@ -609,7 +632,7 @@ async fn handle_messages(config: AppConfig, command: MessagesSubcommand) -> Resu
             let _lock = StoreLock::acquire(&config.lock_path())?;
             print_send_summary(
                 &config,
-                wacli::send_text(
+                whatshell::send_text(
                     config.clone(),
                     cli::SendText {
                         to: chat,
@@ -626,7 +649,7 @@ async fn handle_messages(config: AppConfig, command: MessagesSubcommand) -> Resu
             let _lock = StoreLock::acquire(&config.lock_path())?;
             print_send_summary(
                 &config,
-                wacli::message_edit(
+                whatshell::message_edit(
                     config.clone(),
                     &args.chat,
                     &args.id,
@@ -640,7 +663,7 @@ async fn handle_messages(config: AppConfig, command: MessagesSubcommand) -> Resu
             let _lock = StoreLock::acquire(&config.lock_path())?;
             print_action_summary(
                 &config,
-                wacli::message_revoke(
+                whatshell::message_revoke(
                     config.clone(),
                     &args.chat,
                     &args.id,
@@ -656,8 +679,13 @@ async fn handle_messages(config: AppConfig, command: MessagesSubcommand) -> Resu
             let _lock = StoreLock::acquire(&config.lock_path())?;
             print_action_summary(
                 &config,
-                wacli::message_delete_for_me(config.clone(), &row, args.delete_media, args.dry_run)
-                    .await?,
+                whatshell::message_delete_for_me(
+                    config.clone(),
+                    &row,
+                    args.delete_media,
+                    args.dry_run,
+                )
+                .await?,
             )
         }
         MessagesSubcommand::Star(args) => {
@@ -666,7 +694,7 @@ async fn handle_messages(config: AppConfig, command: MessagesSubcommand) -> Resu
             let _lock = StoreLock::acquire(&config.lock_path())?;
             print_action_summary(
                 &config,
-                wacli::message_star(config.clone(), &row, true, args.dry_run).await?,
+                whatshell::message_star(config.clone(), &row, true, args.dry_run).await?,
             )
         }
         MessagesSubcommand::Unstar(args) => {
@@ -675,7 +703,7 @@ async fn handle_messages(config: AppConfig, command: MessagesSubcommand) -> Resu
             let _lock = StoreLock::acquire(&config.lock_path())?;
             print_action_summary(
                 &config,
-                wacli::message_star(config.clone(), &row, false, args.dry_run).await?,
+                whatshell::message_star(config.clone(), &row, false, args.dry_run).await?,
             )
         }
     }
@@ -687,7 +715,7 @@ async fn handle_group_participants(
     action: &str,
 ) -> Result<()> {
     let _lock = StoreLock::acquire(&config.lock_path())?;
-    let rows = wacli::groups_participants(
+    let rows = whatshell::groups_participants(
         config.clone(),
         &args.jid,
         &args.participants,
@@ -706,7 +734,7 @@ async fn handle_group_setting(
     let _lock = StoreLock::acquire(&config.lock_path())?;
     print_action_summary(
         &config,
-        wacli::groups_setting(config.clone(), &args.jid, action, false).await?,
+        whatshell::groups_setting(config.clone(), &args.jid, action, false).await?,
     )
 }
 
@@ -813,11 +841,11 @@ async fn sync_contacts_unless_offline(config: &AppConfig, offline: bool) -> Resu
     }
     if config.read_only {
         return Err(anyhow!(
-            "contact sync needs write access to the wacli index; pass --offline to search the existing index"
+            "contact sync needs write access to the whatshell index; pass --offline to search the existing index"
         ));
     }
     let _lock = StoreLock::acquire(&config.lock_path())?;
-    wacli::contacts_sync(config.clone()).await?;
+    whatshell::contacts_sync(config.clone()).await?;
     Ok(())
 }
 
@@ -845,7 +873,7 @@ fn search_contacts(config: &AppConfig, query: &str, limit: usize) -> Result<Vec<
     }
     for row in store.list_contacts(Some(query), limit)? {
         rows.push(ContactSearchRow {
-            source: "wacli-index".into(),
+            source: "whatshell-index".into(),
             name: row.name,
             full_name: None,
             first_name: None,
@@ -882,7 +910,7 @@ fn dedupe_contacts(rows: Vec<ContactSearchRow>, limit: usize) -> Result<Vec<Cont
 fn auth_status(config: &AppConfig) -> Result<()> {
     let index = try_store_stats(config)?;
     let status = AuthStatus {
-        authenticated: wacli::has_session(&config.session_db()),
+        authenticated: whatshell::has_session(&config.session_db()),
         session_db: config.session_db().display().to_string(),
         index_db: config.index_db().display().to_string(),
         store_dir: config.store_dir.display().to_string(),
@@ -911,7 +939,7 @@ fn doctor_report(config: &AppConfig) -> Result<DoctorReport> {
         store_dir: config.store_dir.display().to_string(),
         session_db: config.session_db().display().to_string(),
         index_db: config.index_db().display().to_string(),
-        session_present: wacli::has_session(&config.session_db()),
+        session_present: whatshell::has_session(&config.session_db()),
         read_only: config.read_only,
         timeout_secs: config.timeout_secs,
         index: try_store_stats(config)?,
@@ -919,7 +947,7 @@ fn doctor_report(config: &AppConfig) -> Result<DoctorReport> {
 }
 
 fn print_doctor_report(report: &DoctorReport) {
-    println!("wacli {}", report.version);
+    println!("whatshell {}", report.version);
     println!("store_dir: {}", report.store_dir);
     println!("session_db: {}", report.session_db);
     println!("index_db: {}", report.index_db);
@@ -964,7 +992,7 @@ fn print_message_rows(config: &AppConfig, rows: &[store::MessageRecord]) -> Resu
     }
 }
 
-fn print_send_summary(config: &AppConfig, summary: wacli::SendSummary) -> Result<()> {
+fn print_send_summary(config: &AppConfig, summary: whatshell::SendSummary) -> Result<()> {
     if config.json {
         output::json_response(summary)
     } else if summary.dry_run {
@@ -976,7 +1004,7 @@ fn print_send_summary(config: &AppConfig, summary: wacli::SendSummary) -> Result
     }
 }
 
-fn print_action_summary(config: &AppConfig, summary: wacli::ActionSummary) -> Result<()> {
+fn print_action_summary(config: &AppConfig, summary: whatshell::ActionSummary) -> Result<()> {
     if config.json {
         output::json_response(summary)
     } else {
@@ -987,7 +1015,7 @@ fn print_action_summary(config: &AppConfig, summary: wacli::ActionSummary) -> Re
 
 fn init_tracing(verbose: bool) {
     let filter = if verbose {
-        "wacli=debug,whatsapp_rust=info"
+        "whatshell=debug,whatsapp_rust=info"
     } else {
         "error"
     };

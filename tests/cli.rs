@@ -2,8 +2,8 @@ use assert_cmd::Command;
 use predicates::prelude::*;
 
 #[test]
-fn help_lists_wacli_commands() {
-    let mut cmd = Command::cargo_bin("wacli").unwrap();
+fn help_lists_whatshell_commands() {
+    let mut cmd = Command::cargo_bin("whatshell").unwrap();
     cmd.arg("--help")
         .assert()
         .success()
@@ -16,7 +16,7 @@ fn help_lists_wacli_commands() {
 #[test]
 fn dry_run_send_text_is_json_and_does_not_connect() {
     let dir = tempfile::tempdir().unwrap();
-    let mut cmd = Command::cargo_bin("wacli").unwrap();
+    let mut cmd = Command::cargo_bin("whatshell").unwrap();
     cmd.args([
         "--json",
         "--store",
@@ -39,7 +39,7 @@ fn dry_run_send_text_is_json_and_does_not_connect() {
 #[test]
 fn dry_run_send_poll_is_json_and_does_not_connect() {
     let dir = tempfile::tempdir().unwrap();
-    let mut cmd = Command::cargo_bin("wacli").unwrap();
+    let mut cmd = Command::cargo_bin("whatshell").unwrap();
     cmd.args([
         "--json",
         "--store",
@@ -65,7 +65,7 @@ fn dry_run_send_poll_is_json_and_does_not_connect() {
 #[test]
 fn dry_run_send_location_is_json_and_does_not_connect() {
     let dir = tempfile::tempdir().unwrap();
-    let mut cmd = Command::cargo_bin("wacli").unwrap();
+    let mut cmd = Command::cargo_bin("whatshell").unwrap();
     cmd.args([
         "--json",
         "--store",
@@ -89,7 +89,7 @@ fn dry_run_send_location_is_json_and_does_not_connect() {
 #[test]
 fn auth_status_reports_missing_session_without_creating_one() {
     let dir = tempfile::tempdir().unwrap();
-    let mut cmd = Command::cargo_bin("wacli").unwrap();
+    let mut cmd = Command::cargo_bin("whatshell").unwrap();
     cmd.args([
         "--json",
         "--store",

@@ -57,10 +57,10 @@ impl AppConfig {
 }
 
 fn default_store_dir() -> Result<PathBuf> {
-    if let Some(project_dirs) = ProjectDirs::from("dev", "wacli", "wacli") {
+    if let Some(project_dirs) = ProjectDirs::from("dev", "whatshell", "whatshell") {
         return Ok(project_dirs.data_local_dir().to_path_buf());
     }
 
     let home = std::env::var_os("HOME").context("HOME is not set and no project data dir found")?;
-    Ok(PathBuf::from(home).join(".wacli"))
+    Ok(PathBuf::from(home).join(".whatshell"))
 }

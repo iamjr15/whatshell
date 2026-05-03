@@ -6,10 +6,10 @@ const { installAgentSkills } = require("./install-skills");
 
 const root = path.resolve(__dirname, "..");
 const exe = process.platform === "win32" ? ".exe" : "";
-const source = path.join(root, "target", "release", `wacli${exe}`);
-const dest = path.join(root, "npm", "bin", `wacli-${process.platform}-${process.arch}${exe}`);
+const source = path.join(root, "target", "release", `whatshell${exe}`);
+const dest = path.join(root, "npm", "bin", `whatshell-${process.platform}-${process.arch}${exe}`);
 
-if (process.env.WACLI_SKIP_BUILD !== "1") {
+if (process.env.WHATSHELL_SKIP_BUILD !== "1") {
   const cargo = spawnSync("cargo", ["build", "--release"], {
     cwd: root,
     stdio: "inherit",
@@ -32,6 +32,6 @@ if (process.env.WACLI_SKIP_BUILD !== "1") {
 try {
   installAgentSkills({ root });
 } catch (error) {
-  console.error(`Failed to install WACLI agent skills: ${error.message}`);
+  console.error(`Failed to install Whatshell agent skills: ${error.message}`);
   process.exit(1);
 }

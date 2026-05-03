@@ -25,7 +25,7 @@ impl StoreLock {
 
         file.try_lock_exclusive().map_err(|err| {
             anyhow!(
-                "store is already locked at {} ({err}). Stop the other wacli process or use another --store",
+                "store is already locked at {} ({err}). Stop the other whatshell process or use another --store",
                 path.display()
             )
         })?;

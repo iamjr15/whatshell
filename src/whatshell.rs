@@ -351,9 +351,9 @@ async fn run_capture(
                     Some(ControlEvent::Stored) => last_activity = Instant::now(),
                     Some(ControlEvent::NeedsAuth) => {
                         client.disconnect().await;
-                        return Err(anyhow!("not authenticated; run `wacli auth` first"));
+                        return Err(anyhow!("not authenticated; run `whatshell auth` first"));
                     }
-                    Some(ControlEvent::LoggedOut) => return Err(anyhow!("WhatsApp session logged out; run `wacli auth`")),
+                    Some(ControlEvent::LoggedOut) => return Err(anyhow!("WhatsApp session logged out; run `whatshell auth`")),
                     Some(ControlEvent::PairSuccess) | None => {}
                 }
             }
@@ -1520,11 +1520,11 @@ async fn resolve_block_jids(
     }
 
     let lid_jid = lid_jid.ok_or_else(|| {
-        anyhow!("blocking requires the contact LID; run `wacli contacts sync` and retry")
+        anyhow!("blocking requires the contact LID; run `whatshell contacts sync` and retry")
     })?;
     let pn_jid = pn_jid.ok_or_else(|| {
         anyhow!(
-            "blocking requires the contact phone JID; run `wacli contacts sync` or pass the phone-number JID"
+            "blocking requires the contact phone JID; run `whatshell contacts sync` or pass the phone-number JID"
         )
     })?;
     Ok((lid_jid, pn_jid))
@@ -1797,12 +1797,12 @@ async fn connect_for_live_command(
             Ok(Some(ControlEvent::NeedsAuth)) => {
                 client.disconnect().await;
                 handle.abort();
-                return Err(anyhow!("not authenticated; run `wacli auth` first"));
+                return Err(anyhow!("not authenticated; run `whatshell auth` first"));
             }
             Ok(Some(ControlEvent::LoggedOut)) => {
                 client.disconnect().await;
                 handle.abort();
-                return Err(anyhow!("WhatsApp session logged out; run `wacli auth`"));
+                return Err(anyhow!("WhatsApp session logged out; run `whatshell auth`"));
             }
             Ok(Some(_)) | Ok(None) | Err(_) => {}
         }
@@ -2052,7 +2052,7 @@ async fn build_bot(
         .with_transport_factory(TokioWebSocketTransportFactory::new())
         .with_http_client(UreqHttpClient::new())
         .with_runtime(TokioRuntime)
-        .with_push_name("wacli")
+        .with_push_name("whatshell")
         .on_event(move |event, client| {
             let writer = writer_for_handler.clone();
             let control_tx = control_tx.clone();

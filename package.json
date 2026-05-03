@@ -1,16 +1,16 @@
 {
   "name": "whatshell",
-  "version": "0.1.0",
-  "description": "WACLI: a Rust WhatsApp Web CLI for coding agents",
+  "version": "0.1.1",
+  "description": "Whatshell: a Rust WhatsApp Web CLI for coding agents",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamjr15/wacli.git"
+    "url": "git+https://github.com/iamjr15/whatshell.git"
   },
   "bugs": {
-    "url": "https://github.com/iamjr15/wacli/issues"
+    "url": "https://github.com/iamjr15/whatshell/issues"
   },
-  "homepage": "https://github.com/iamjr15/wacli#readme",
+  "homepage": "https://github.com/iamjr15/whatshell#readme",
   "keywords": [
     "whatsapp",
     "whatsapp-web",
@@ -22,7 +22,7 @@
     "rust"
   ],
   "bin": {
-    "wacli": "npm/bin/wacli.js"
+    "whatshell": "npm/bin/whatshell.js"
   },
   "scripts": {
     "postinstall": "node npm/install.js",
@@ -34,7 +34,7 @@
     "Cargo.toml",
     "Cargo.lock",
     "src",
-    "npm/bin/wacli.js",
+    "npm/bin/whatshell.js",
     "npm/install.js",
     "npm/install-skills.js",
     "npm/test-install-skills.js",

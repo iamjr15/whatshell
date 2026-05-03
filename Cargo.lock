@@ -2740,39 +2740,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "051eb1abcf10076295e815102942cc58f9d5e3b4560e46e53c21e8ff6f3af7b1"
 
 [[package]]
-name = "wacli"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "assert_cmd",
- "base64",
- "chrono",
- "clap",
- "comfy-table",
- "directories",
- "fs2",
- "hex",
- "mime_guess",
- "predicates",
- "qrcode",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "wacore",
- "wacore-binary",
- "whatsapp-rust",
- "whatsapp-rust-sqlite-storage",
- "whatsapp-rust-tokio-transport",
- "whatsapp-rust-ureq-http-client",
-]
-
-[[package]]
 name = "wacore"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3130,6 +3097,39 @@ dependencies = [
  "tokio",
  "ureq",
  "wacore",
+]
+
+[[package]]
+name = "whatshell"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "assert_cmd",
+ "base64",
+ "chrono",
+ "clap",
+ "comfy-table",
+ "directories",
+ "fs2",
+ "hex",
+ "mime_guess",
+ "predicates",
+ "qrcode",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "wacore",
+ "wacore-binary",
+ "whatsapp-rust",
+ "whatsapp-rust-sqlite-storage",
+ "whatsapp-rust-tokio-transport",
+ "whatsapp-rust-ureq-http-client",
 ]
 
 [[package]]

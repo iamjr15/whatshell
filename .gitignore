@@ -1,6 +1,6 @@
 /target/
 /node_modules/
-/npm/bin/wacli-*
+/npm/bin/whatshell-*
 /.expect/
 /.DS_Store
 *.db

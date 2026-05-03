@@ -3,9 +3,13 @@ use std::path::PathBuf;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 
 #[derive(Debug, Parser)]
-#[command(name = "wacli", version, about = "WhatsApp Web CLI for coding agents")]
+#[command(
+    name = "whatshell",
+    version,
+    about = "WhatsApp Web CLI for coding agents"
+)]
 pub struct Cli {
-    #[arg(long, global = true, env = "WACLI_STORE")]
+    #[arg(long, global = true, env = "WHATSHELL_STORE")]
     pub store: Option<PathBuf>,
 
     #[arg(long, global = true)]
@@ -14,7 +18,7 @@ pub struct Cli {
     #[arg(long, global = true, default_value = "60")]
     pub timeout: u64,
 
-    #[arg(long, global = true, env = "WACLI_READ_ONLY")]
+    #[arg(long, global = true, env = "WHATSHELL_READ_ONLY")]
     pub read_only: bool,
 
     #[arg(short, long, global = true)]
@@ -468,7 +472,7 @@ pub struct ContactList {
     #[arg(long, default_value = "50")]
     pub limit: usize,
 
-    /// Read the local wacli contact index without first syncing WhatsApp app state.
+    /// Read the local whatshell contact index without first syncing WhatsApp app state.
     #[arg(long)]
     pub offline: bool,
 }
@@ -480,7 +484,7 @@ pub struct ContactSearch {
     #[arg(long, default_value = "25")]
     pub limit: usize,
 
-    /// Read the local wacli contact index without first syncing WhatsApp app state.
+    /// Read the local whatshell contact index without first syncing WhatsApp app state.
     #[arg(long)]
     pub offline: bool,
 }
