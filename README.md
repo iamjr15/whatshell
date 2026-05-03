@@ -29,7 +29,7 @@ The npm install also installs the Whatshell Agent Skill globally for coding agen
 - Claude Code: `~/.claude/skills/whatshell`
 - Codex and OpenCode agent-compatible discovery: `~/.agents/skills/whatshell`
 
-OpenCode also discovers the Claude-compatible and agent-compatible locations and de-duplicates by skill name, so Whatshell does not install a third OpenCode-native copy by default. Set `WHATSHELL_INSTALL_OPENCODE_SKILL=1` if you explicitly want `~/.config/opencode/skills/whatshell` too. Set `WHATSHELL_INSTALL_CODEX_HOME_SKILL=1` if you explicitly want a legacy `$CODEX_HOME/skills/whatshell` copy. Set `WHATSHELL_SKIP_SKILL_INSTALL=1` to skip skill installation.
+OpenCode also discovers the Claude-compatible and agent-compatible locations and de-duplicates by skill name, so Whatshell does not install a third OpenCode-native copy by default. Set `WHATSHELL_INSTALL_OPENCODE_SKILL=1` if you explicitly want `~/.config/opencode/skills/whatshell` too. Set `WHATSHELL_INSTALL_CODEX_HOME_SKILL=1` if you explicitly want a `$CODEX_HOME/skills/whatshell` copy. Set `WHATSHELL_SKIP_SKILL_INSTALL=1` to skip skill installation.
 
 ## Authenticate
 
