@@ -3,6 +3,24 @@
   "version": "0.1.0",
   "description": "WACLI: a Rust WhatsApp Web CLI for coding agents",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamjr15/wacli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iamjr15/wacli/issues"
+  },
+  "homepage": "https://github.com/iamjr15/wacli#readme",
+  "keywords": [
+    "whatsapp",
+    "whatsapp-web",
+    "cli",
+    "agent",
+    "codex",
+    "claude-code",
+    "opencode",
+    "rust"
+  ],
   "bin": {
     "wacli": "npm/bin/wacli.js"
   },
@@ -22,8 +40,12 @@
     "npm/test-install-skills.js",
     "skills",
     "README.md",
+    "LICENSE",
     ".gitignore"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   }
