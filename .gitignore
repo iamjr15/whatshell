@@ -1,0 +1,8 @@
+/target/
+/node_modules/
+/npm/bin/wacli-*
+/.expect/
+/.DS_Store
+*.db
+*.db-shm
+*.db-wal

@@ -1,0 +1,30 @@
+{
+  "name": "wacli",
+  "version": "0.1.0",
+  "description": "WACLI: a Rust WhatsApp Web CLI for coding agents",
+  "license": "MIT",
+  "bin": {
+    "wacli": "npm/bin/wacli.js"
+  },
+  "scripts": {
+    "postinstall": "node npm/install.js",
+    "build": "cargo build --release",
+    "test": "cargo test && node npm/test-install-skills.js",
+    "test:skills": "node npm/test-install-skills.js"
+  },
+  "files": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "src",
+    "npm/bin/wacli.js",
+    "npm/install.js",
+    "npm/install-skills.js",
+    "npm/test-install-skills.js",
+    "skills",
+    "README.md",
+    ".gitignore"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

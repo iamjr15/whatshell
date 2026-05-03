@@ -1,0 +1,56 @@
+[package]
+name = "wacli"
+version = "0.1.0"
+edition = "2024"
+description = "WACLI: a Rust WhatsApp Web CLI for coding agents"
+license = "MIT"
+repository = "https://example.invalid/wacli"
+
+[[bin]]
+name = "wacli"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.5", features = ["derive", "env"] }
+comfy-table = "7.2"
+directories = "6.0"
+fs2 = "0.4"
+hex = "0.4"
+mime_guess = "2.0"
+qrcode = "0.14"
+rusqlite = { version = "0.37", features = ["bundled", "chrono"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.11.0-rc.3"
+thiserror = "2.0"
+tokio = { version = "1.48", features = ["fs", "macros", "rt-multi-thread", "signal", "sync", "time"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+wacore = { version = "0.5.0", default-features = false }
+wacore-binary = { version = "0.5.0", default-features = false }
+whatsapp-rust = { version = "0.5.0", default-features = false, features = [
+    "moka-cache",
+    "sqlite-storage",
+    "tokio-transport",
+    "tokio-runtime",
+    "ureq-client",
+    "tokio-native",
+    "signal",
+] }
+whatsapp-rust-sqlite-storage = "0.5.0"
+whatsapp-rust-tokio-transport = "0.5.0"
+whatsapp-rust-ureq-http-client = "0.5.0"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.1"
+tempfile = "3.23"
+
+[profile.release]
+opt-level = "z"
+lto = "thin"
+codegen-units = 1
+strip = true
