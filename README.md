@@ -6,6 +6,12 @@ This is not the WhatsApp Business Cloud API. It links like WhatsApp Web and depe
 
 ## Install
 
+From npm:
+
+```bash
+npm install -g @iamjr15/wacli
+```
+
 From this directory:
 
 ```bash
