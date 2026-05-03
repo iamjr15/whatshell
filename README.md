@@ -9,7 +9,7 @@ This is not the WhatsApp Business Cloud API. It links like WhatsApp Web and depe
 From npm:
 
 ```bash
-npm install -g @iamjr15/wacli
+npm install -g whatshell
 ```
 
 From this directory:

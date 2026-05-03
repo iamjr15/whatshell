@@ -4,7 +4,7 @@ description: Uses WACLI, the WhatsApp Web CLI, to safely read, search, summarize
 license: MIT
 compatibility: Requires the `wacli` command from the npm package or Cargo install. Works with Claude Code, Codex, OpenCode, and agents that support Agent Skills.
 metadata:
-  package: "@iamjr15/wacli"
+  package: whatshell
   category: communications
 ---
 

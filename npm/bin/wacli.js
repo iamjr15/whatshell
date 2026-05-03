@@ -10,7 +10,7 @@ const target = path.join(root, "target", "release", `wacli${exe}`);
 const bin = fs.existsSync(bundled) ? bundled : target;
 
 if (!fs.existsSync(bin)) {
-  console.error("wacli binary was not built. Run `npm rebuild @iamjr15/wacli` or `cargo build --release`.");
+  console.error("wacli binary was not built. Run `npm rebuild whatshell` or `cargo build --release`.");
   process.exit(1);
 }
 

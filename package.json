@@ -1,5 +1,5 @@
 {
-  "name": "@iamjr15/wacli",
+  "name": "whatshell",
   "version": "0.1.0",
   "description": "WACLI: a Rust WhatsApp Web CLI for coding agents",
   "license": "MIT",
